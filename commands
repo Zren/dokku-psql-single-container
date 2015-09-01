@@ -86,10 +86,11 @@ case "$1" in
   psql:rebuild)
     dokku psql:stop
     dokku_log_info1 "Rebuilding Postgresql container"
-    export PSQL_BACKUP_IMAGE_NAME="$PSQL_CONTAINER_NAME-backup"
+    PSQL_BACKUP_IMAGE_NAME="$PSQL_CONTAINER_NAME-backup"
+    PSQL_BACKUP_CONTAINER_NAME="$PSQL_CONTAINER_NAME-backup"
     docker commit "$PSQL_CONTAINER_NAME" "$PSQL_BACKUP_IMAGE_NAME"
-    export PSQL_IMAGE="$PSQL_BACKUP_IMAGE_NAME"
-    export PSQL_CONTAINER_NAME="$PSQL_BACKUP_IMAGE_NAME"
+    docker rename "$PSQL_CONTAINER_NAME" "$PSQL_BACKUP_CONTAINER_NAME"
+    export PSQL_SC_IMAGE="$PSQL_BACKUP_IMAGE_NAME"
     dokku psql:start
     ;;
 
