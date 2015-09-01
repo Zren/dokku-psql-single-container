@@ -68,7 +68,7 @@ case "$1" in
       exit 0
     fi
     dokku_log_info1 "Starting Postgresql server"
-    echo "Port: $(bind_ip_options)"
+    dokku_log_info1 "Port: $(bind_ip_options)"
     docker run $(bind_ip_options) -d -v "$PSQL_ROOT/data:/var/lib/postgresql/data" --name "$PSQL_CONTAINER_NAME" "$PSQL_IMAGE" > /dev/null
     ;;
 
@@ -81,6 +81,16 @@ case "$1" in
     check_container
     dokku_log_info1 "Stopping Postgresql server"
     docker stop "$PSQL_CONTAINER_NAME" > /dev/null
+    ;;
+
+  psql:rebuild)
+    dokku psql:stop
+    dokku_log_info1 "Rebuilding Postgresql container"
+    local PSQL_BACKUP_IMAGE_NAME="$PSQL_CONTAINER_NAME-backup"
+    docker commit "$PSQL_CONTAINER_NAME" "$PSQL_BACKUP_IMAGE_NAME"
+    PSQL_IMAGE="$PSQL_BACKUP_IMAGE_NAME"
+    PSQL_CONTAINER_NAME="$PSQL_BACKUP_IMAGE_NAME"
+    dokku psql:start
     ;;
 
   psql:dump)
@@ -114,6 +124,7 @@ case "$1" in
     psql:restart                                    Restart the Postgresql docker container
     psql:start                                      Start the Postgresql docker container if it isn't running
     psql:stop                                       Stop the Postgresql docker container
+    psql:rebuild                                    Copy the Postgresql docker container, and build a new container.
     psql:status                                     Shows status of Postgresql
     psql:list                                       List all databases
 EOF
