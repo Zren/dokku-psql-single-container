@@ -96,8 +96,10 @@ case "$1" in
     dokku_log_info1 "Attempt to run new container using $PSQL_SC_IMAGE image."
     dokku psql:start
     dokku_log_info1 "If everything went well, delete the backup container/image with:"
-    dokku_log_info1 "docker ..."
-    dokku_log_info1 "docker ..."
+    dokku_log_info1 "    docker ..."
+    dokku_log_info1 "    docker ..."
+    dokku_log_info1 "Otherwise:"
+    dokku_log_info1 "    docker rename $PSQL_BACKUP_CONTAINER_NAME $PSQL_CONTAINER_NAME"
     ;;
 
   psql:dump)
