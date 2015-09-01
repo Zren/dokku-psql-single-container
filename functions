@@ -69,3 +69,14 @@ interactive_docker_exec() {
   local TTY_OPT=$([[ -t 0 ]] && echo "--tty")
   docker exec --interactive "$TTY_OPT" "$@"
 }
+
+bind_ip_options() {
+  local BIND_IP="$PSQL_SC_BIND_IP"
+  local BIND_PORT="${PSQL_SC_BIND_PORT:-$PSQL_PORT}"
+  if [[ -n $BIND_IP ]]; then
+    echo "-p $BIND_IP:$PSQL_PORT:$BIND_PORT"
+  else
+    echo ''
+  fi
+}
+
